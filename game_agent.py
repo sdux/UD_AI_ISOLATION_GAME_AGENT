@@ -119,6 +119,8 @@ class IsolationPlayer:
         self.TIMER_THRESHOLD = timeout
 
 
+
+        
 class MinimaxPlayer(IsolationPlayer):
     """Game-playing agent that chooses a move using depth-limited minimax
     search. You must finish and test this player to make sure it properly uses
@@ -213,7 +215,8 @@ class MinimaxPlayer(IsolationPlayer):
             raise SearchTimeout()
 
         # TODO: finish this function!
-        raise NotImplementedError
+        print('Printing legal moves: /n',game.get_legal_moves())
+        return game.get_legal_moves()[0]
 
 
 class AlphaBetaPlayer(IsolationPlayer):
