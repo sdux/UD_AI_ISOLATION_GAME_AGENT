@@ -215,8 +215,81 @@ class MinimaxPlayer(IsolationPlayer):
             raise SearchTimeout()
 
         # TODO: finish this function!
-        print('Printing legal moves: /n',game.get_legal_moves())
-        return game.get_legal_moves()[0]
+        #print('Printing legal moves: /n',game.get_legal_moves())
+        
+        def terminal_test(gameState):
+            if self.time_left() < self.TIMER_THRESHOLD:
+                raise SearchTimeout()
+            """ Return True if the game is over for the active player
+            and False otherwise.
+            """
+            # The game is over when the active player has no valid move.
+            # So we could check if there is a valid move
+
+            # if there are no valid moves - game over.
+
+            #print(len(gameState.get_legal_moves()))
+            if len(gameState.get_legal_moves()) <1:
+                return True
+            else:
+                #print('Legal moves remaining: ',gameState.get_legal_moves())
+                return False
+         
+        def min_value(gameState):
+            if self.time_left() < self.TIMER_THRESHOLD:
+                raise SearchTimeout()
+            """ Return the value for a win (+1) if the game is over,
+            otherwise return the minimum value over all legal child
+            nodes.
+            """
+            # So we can check if the game is over using above terminal_test()
+            if terminal_test(gameState):
+                return 1
+
+            v = float("inf")
+            for m in gameState.get_legal_moves():
+                v = min(v, max_value(gameState.forecast_move(m)))
+            #print('Value within min_value: ',v)
+            return v 
+
+
+        def max_value(gameState):
+            if self.time_left() < self.TIMER_THRESHOLD:
+                raise SearchTimeout()
+            """ Return the value for a loss (-1) if the game is over,
+            otherwise return the maximum value over all legal child
+            nodes.
+            """
+            if terminal_test(gameState):
+                return -1
+
+            v = float("-inf")
+            for m in gameState.get_legal_moves():
+                v = max(v, min_value(gameState.forecast_move(m)))
+            return v
+        
+        def _minimax_decision(gameState):
+            if self.time_left() < self.TIMER_THRESHOLD:
+                raise SearchTimeout()
+            """ Return the move along a branch of the game tree that
+            has the best possible value.  A move is a pair of coordinates
+            in (column, row) order corresponding to a legal move for
+            the searching player.
+
+            You can ignore the special case of calling this function
+            from a terminal state.
+            """
+            best_score = float("-inf")
+            best_move = None
+            for m in gameState.get_legal_moves():
+                v = min_value(gameState.forecast_move(m))
+                if v > best_score:
+                    best_score = v
+                    best_move = m
+            return best_move
+        
+        # end minimax
+        return _minimax_decision(game)
 
 
 class AlphaBetaPlayer(IsolationPlayer):
