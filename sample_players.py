@@ -160,7 +160,7 @@ class RandomPlayer():
         if not legal_moves:
             return (-1, -1)
         rndm_move = legal_moves[randint(0, len(legal_moves) - 1)]
-        print('... Selecting RNDM Move: ',rndm_move)
+        #print('... Selecting RNDM Move: ',rndm_move)
         return rndm_move
 
 

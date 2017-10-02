@@ -24,8 +24,8 @@ class IsolationTest(unittest.TestCase):
         from isolation import Board
 
         # create an isolation board (by default 7x7)
-        player2 = game_agent.MinimaxPlayer()
-        player1 = sample_players.RandomPlayer()
+        player1 = game_agent.AlphaBetaPlayer()
+        player2 = sample_players.RandomPlayer()
         game = Board(player1, player2)
 
         # place player 1 on the board at row 2, column 3, then place player 2 on
