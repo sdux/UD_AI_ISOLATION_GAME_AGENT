@@ -41,16 +41,42 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
+    
+
     # TODO: finish this function!
+
     if game.is_loser(player):
-        return float("-inf")
+            return float("-inf")
 
     if game.is_winner(player):
-        return float("inf")
+            return float("inf")
+
+    w, h = game.get_player_location(game.get_opponent(player))
+    y, x = game.get_player_location(player)
+
+    player_sep = float((h - y)**2 + (w - x)**2)
 
     own_moves = len(game.get_legal_moves(player))
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    return float(own_moves - opp_moves)
+
+    modified_moves_diff = float(own_moves - (2*opp_moves)) 
+
+    """ 
+    Added weight factor of 2*opp_moves to emphasises selection of moves where
+    the opponenet has fewer options.
+    example: 
+    myMoves: 6 opMoves: 4, Difference: 2
+    myMoves: 4 opMoves: 2, Difference: 2
+
+    Heuristic to select the move that gives the opponent fewer options.
+
+    Added position seeking component:
+
+    Heuristic to assign slightly more weight to moves that are closer
+    to the opponent.
+
+    """
+    return modified_moves_diff + (1/(1+player_sep))
 
 
 def custom_score_2(game, player):
@@ -73,13 +99,17 @@ def custom_score_2(game, player):
     float
         The heuristic value of the current game state
     """
-    if game.is_loser(player):
+    if game.is_loser(player) or game.is_winner(game.get_opponent(player)):
         return float("-inf")
 
-    if game.is_winner(player):
+    if game.is_winner(player) or game.is_loser(game.get_opponent(player)):
         return float("inf")
 
-    return float(len(game.get_legal_moves(player)))
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+
+    # Prioritize moves with greater number of own moves
+    return float((2*own_moves) - opp_moves)
 
 
 def custom_score_3(game, player):
@@ -105,16 +135,30 @@ def custom_score_3(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
+    
     if game.is_loser(player):
         return float("-inf")
 
     if game.is_winner(player):
-        return float("inf")
+        return float("inf")   
 
-    w, h = game.width / 2., game.height / 2.
-    y, x = game.get_player_location(player)
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
 
-    return float((h - y)**2 + (w - x)**2)
+    """ Modified improved score from sample_players 
+    Added weight factor of 2*opp_moves to emphasises selection of moves where
+    the opponenet has fewer options.
+    example: 
+            myMoves: 6 opMoves: 4, Difference: 2
+            myMoves: 4 opMoves: 2, Difference: 2
+            
+            Heuristic to select the move that gives the opponent fewer options.
+    """
+
+    # Prioritize moves with where the difference between player moves and
+    # opponent move is the greatest, in tie situations, select option
+    # with fewer opponent moves 
+    return float(own_moves - (2*opp_moves))
 
 
 class IsolationPlayer:
@@ -144,8 +188,6 @@ class IsolationPlayer:
         self.score = score_fn
         self.time_left = None
         self.TIMER_THRESHOLD = timeout
-
-
 
         
 class MinimaxPlayer(IsolationPlayer):
@@ -287,7 +329,7 @@ class MinimaxPlayer(IsolationPlayer):
             if self.time_left() < self.TIMER_THRESHOLD:
                 raise SearchTimeout()
       
-            # If we've reached termina state - return the score (Heuristic)
+            # If we've reached terminal state - return the score (Heuristic)
             # for selected move
             if terminal_test(self, gameState, depth):
                 return self.score(gameState, self)

@@ -31,8 +31,8 @@ class IsolationTest(unittest.TestCase):
         # place player 1 on the board at row 2, column 3, then place player 2 on
         # the board at row 0, column 5; display the resulting board state.  Note
         # that the .apply_move() method changes the calling object in-place.
-        game.apply_move((4, 2))
-        game.apply_move((2, 4))
+        game.apply_move((4, 3))
+        game.apply_move((3, 4))
         print(game.to_string())
 
         # players take turns moving on the board, so player1 should be next to move
